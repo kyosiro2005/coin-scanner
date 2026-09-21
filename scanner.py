@@ -35,8 +35,8 @@ def send_telegram_message(message_text):
         print(f"❌ 텔레그램 전송 실패: {e}")
 
 def get_binance_crypto_tickers():
-    info_url = "https://fapi.binance.com/fapi/v1/exchangeInfo"
-    ticker_url = "https://fapi.binance.com/fapi/v1/ticker/24hr"
+    info_url = "https://fapi.binance.me/fapi/v1/exchangeInfo"
+    ticker_url = "https://fapi.binance.me/fapi/v1/ticker/24hr"
 
     NON_CRYPTO_BLACKLIST = {
         "ANTHROPIC", "OPENAI", "SPACEX", "STRIPE", "FIGMA", "DATABRICKS",
