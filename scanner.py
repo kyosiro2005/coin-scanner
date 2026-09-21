@@ -1,13 +1,11 @@
 import json
-import math
-import ssl
-import sys
-import time
-import urllib.request
-from datetime import datetime
+import requests
 
-# ⚙️ SSL 및 요청 헤더 설정 (차단 방지)
-SSL_CTX = ssl._create_unverified_context()
+# 📱 텔레그램 연동 정보
+TELEGRAM_BOT_TOKEN = "8995639791:AAEw7MFhgjI0kE"
+TELEGRAM_CHAT_ID = "7191315709"
+
+# 🌐 요청 헤더 설정
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept": "application/json",
@@ -15,26 +13,27 @@ HEADERS = {
     "Cache-Control": "no-cache"
 }
 
-# 📱 텔레그램 연동 정보
-TELEGRAM_BOT_TOKEN = "8995639791:AAEw7MFhgjI0kE"  # 사용자의 토큰 정보
-TELEGRAM_CHAT_ID = "7191315709"
-
 def send_telegram_message(message_text):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         print("⚠️ 텔레그램 설정이 올바르지 않습니다.")
         return
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = json.dumps({"chat_id": TELEGRAM_CHAT_ID, "text": message_text, "parse_mode": "HTML"}).encode('utf-8')
-    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message_text,
+        "parse_mode": "HTML"
+    }
     try:
-        with urllib.request.urlopen(req, context=SSL_CTX) as resp:
+        response = requests.post(url, json=payload, timeout=10)
+        if response.status_code == 200:
             print("📲 텔레그램 리포트 전송 완료!")
+        else:
+            print(f"❌ 텔레그램 전송 실패: {response.status_code}")
     except Exception as e:
         print(f"❌ 텔레그램 전송 실패: {e}")
 
 def get_binance_crypto_tickers():
-    # 🌐 바이낸스 우회 주소 (.me) 사용
     info_url = "https://fapi.binance.me/fapi/v1/exchangeInfo"
     ticker_url = "https://fapi.binance.me/fapi/v1/ticker/24hr"
 
@@ -49,9 +48,12 @@ def get_binance_crypto_tickers():
     }
 
     try:
-        req_info = urllib.request.Request(info_url, headers=HEADERS)
-        with urllib.request.urlopen(req_info, context=SSL_CTX, timeout=5) as resp:
-            info_data = json.loads(resp.read().decode())
+        session = requests.Session()
+        session.headers.update(HEADERS)
+
+        resp_info = session.get(info_url, timeout=10)
+        resp_info.raise_for_status()
+        info_data = resp_info.json()
 
         valid_crypto_symbols = set()
         for s in info_data.get("symbols", []):
@@ -67,9 +69,9 @@ def get_binance_crypto_tickers():
                 continue
             valid_crypto_symbols.add(symbol)
 
-        req_ticker = urllib.request.Request(ticker_url, headers=HEADERS)
-        with urllib.request.urlopen(req_ticker, context=SSL_CTX, timeout=5) as resp:
-            ticker_data = json.loads(resp.read().decode())
+        resp_ticker = session.get(ticker_url, timeout=10)
+        resp_ticker.raise_for_status()
+        ticker_data = resp_ticker.json()
 
         filtered_tickers = [t for t in ticker_data if t["symbol"] in valid_crypto_symbols]
         return filtered_tickers
@@ -78,7 +80,6 @@ def get_binance_crypto_tickers():
         print(f"❌ 데이터 수집 실패: {e}")
         return []
 
-# 스캐너 실행 구문
 if __name__ == "__main__":
     print("⏳ [GitHub Actions 스캔 가동 중...]")
     tickers = get_binance_crypto_tickers()
