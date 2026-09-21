@@ -8,7 +8,9 @@ from datetime import datetime
 
 # ⚙️ PythonAnywhere 클라우드 환경 SSL 설정
 SSL_CTX = ssl._create_unverified_context()
-HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+}
 
 # 📲 텔레그램 연동 정보
 TELEGRAM_BOT_TOKEN = "8995639791:AAEw7MFhgjIOk0z4QtVMk6bv48PibFi8j1k"
