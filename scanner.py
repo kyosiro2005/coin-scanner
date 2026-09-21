@@ -9,7 +9,10 @@ from datetime import datetime
 # ⚙️ PythonAnywhere 클라우드 환경 SSL 설정
 SSL_CTX = ssl._create_unverified_context()
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "no-cache"
 }
 
 # 📲 텔레그램 연동 정보
@@ -37,8 +40,9 @@ def send_telegram_message(message_text):
         print(f"❌ 텔레그램 전송 실패: {e}")
 
 def get_binance_crypto_tickers():
-    info_url = "https://fapi.binance.me/fapi/v1/exchangeInfo"
-    ticker_url = "https://fapi.binance.me/fapi/v1/ticker/24hr"
+   # 38번, 39번 줄 예시
+info_url = "https://fapi.binance.me/fapi/v1/exchangeInfo"
+ticker_url = "https://fapi.binance.me/fapi/v1/ticker/24hr" 
 
     NON_CRYPTO_BLACKLIST = {
         "ANTHROPIC", "OPENAI", "SPACEX", "STRIPE", "FIGMA", "DATABRICKS",
