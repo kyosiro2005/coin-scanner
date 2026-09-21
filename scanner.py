@@ -7,7 +7,7 @@ import urllib.request
 from datetime import datetime
 
 # ⚙️ SSL 및 요청 헤더 설정 (차단 방지)
-SSL_CTX = ssl.create_unverified_context()
+SSL_CTX = ssl._create_unverified_context()
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept": "application/json",
